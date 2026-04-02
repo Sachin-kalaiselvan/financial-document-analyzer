@@ -92,4 +92,3 @@ Tested on a 3-page fictional bank statement (Oct–Dec 2024):
 ---
 
 **Sachin K** — [GitHub](https://github.com/Sachin-kalaiselvan)
-```
