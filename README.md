@@ -31,8 +31,7 @@ PDF Upload → Text Extraction (PyMuPDF)
           → LLM Answer (Groq Llama 3.1)
 ```
 
-No LangChain — every component is built and wired manually so the pipeline is fully transparent and explainable.
-
+No LangChain — each component is built directly so the pipeline is easy to follow and modify.
 ---
 
 ## Tech Stack
@@ -100,13 +99,6 @@ Tested on a 3-page fictional bank statement (Oct–Dec 2024):
 **Accuracy: 8/8 factual questions answered correctly**
 
 ---
-
-## Key Learnings
-
-- Chunk size of 500 with overlap 50 works well for tabular financial data
-- Increasing retrieval k from 4 to 6 improved coverage for edge case questions
-- Question phrasing affects retrieval — shorter, direct questions work best
-- Grounding the LLM strictly to retrieved context eliminates hallucination
 
 ---
 
