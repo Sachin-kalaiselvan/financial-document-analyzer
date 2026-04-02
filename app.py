@@ -5,11 +5,7 @@ import numpy as np
 import groq
 from sentence_transformers import SentenceTransformer
 
-st.set_page_config(
-    page_title="Financial Document Analyzer",
-    page_icon="📊",
-    layout="centered"
-)
+st.set_page_config(page_title="Financial Document Analyzer", page_icon="📊", layout="centered")
 
 st.title("📊 Financial Document Analyzer")
 st.caption("Upload any financial PDF and ask questions in plain English.")
