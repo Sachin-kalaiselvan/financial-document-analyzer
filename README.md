@@ -16,7 +16,7 @@ Upload a bank statement, loan agreement, or financial report and ask questions l
 - *"What is the closing balance?"*
 - *"What is the total monthly income including freelance?"*
 
-The app retrieves the most relevant sections from your document and generates a precise, grounded answer — it will never hallucinate information that isn't in the document.
+The app retrieves the most relevant sections from your document and answers strictly from that context, which significantly reduces the chance of the model making up information.
 
 ---
 
