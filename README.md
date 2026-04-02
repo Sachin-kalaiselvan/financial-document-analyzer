@@ -70,10 +70,8 @@ cd financial-document-analyzer
 pip install -r requirements.txt
 ```
 
-Create a `.env` file:
-```
-GROQ_API_KEY=your_groq_api_key_here
-```
+When running the app, enter your Groq API key in the sidebar when prompted.
+Get your free key at console.groq.com
 
 Run the app:
 ```bash
