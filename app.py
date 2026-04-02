@@ -5,7 +5,6 @@ import numpy as np
 import groq
 from sentence_transformers import SentenceTransformer
 
-# ── Page config ───────────────────────────────────────────────
 st.set_page_config(
     page_title="Financial Document Analyzer",
     page_icon="📊",
@@ -16,10 +15,8 @@ st.title("📊 Financial Document Analyzer")
 st.caption("Upload any financial PDF and ask questions in plain English.")
 st.divider()
 
-# ── Groq API key input ─────────────────────────────────────────
 groq_key = st.sidebar.text_input("🔑 Groq API Key", type="password")
 st.sidebar.caption("Get your free key at console.groq.com")
-
 st.sidebar.divider()
 st.sidebar.markdown("**Try asking:**")
 st.sidebar.markdown("- What is the average monthly surplus?")
@@ -28,16 +25,14 @@ st.sidebar.markdown("- What are the recurring investments?")
 st.sidebar.markdown("- What is the closing balance?")
 st.sidebar.markdown("- What is the total monthly income?")
 
-# ── Load embedder once ─────────────────────────────────────────
 @st.cache_resource
 def load_embedder():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 embedder = load_embedder()
 
-# ── Core functions ─────────────────────────────────────────────
-def extract_text(pdf_file):
-    doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
+def extract_text(pdf_bytes):
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
     text = ""
     for i, page in enumerate(doc):
         text += f"\n--- Page {i+1} ---\n{page.get_text()}"
@@ -57,7 +52,7 @@ def build_index(chunks):
     embeddings = embedder.encode(chunks, show_progress_bar=False)
     index = faiss.IndexFlatL2(embeddings.shape[1])
     index.add(np.array(embeddings))
-    return index, embeddings
+    return index
 
 def retrieve(query, index, chunks, k=6):
     vec = embedder.encode([query])
@@ -86,15 +81,23 @@ Answer:"""
     )
     return response.choices[0].message.content.strip(), context_chunks
 
-# ── Main UI ────────────────────────────────────────────────────
 uploaded_file = st.file_uploader("Upload a financial PDF", type="pdf")
 
 if uploaded_file:
-    with st.spinner("Reading and indexing your document..."):
-        raw_text = extract_text(uploaded_file)
-        chunks   = chunk_text(raw_text)
-        index, _ = build_index(chunks)
-    st.success(f"Document indexed — {len(chunks)} chunks ready.")
+    file_key = uploaded_file.name
+
+    if "indexed_file" not in st.session_state or st.session_state.indexed_file != file_key:
+        with st.spinner("Reading and indexing your document..."):
+            pdf_bytes = uploaded_file.read()
+            raw_text = extract_text(pdf_bytes)
+            chunks = chunk_text(raw_text)
+            index = build_index(chunks)
+            st.session_state.indexed_file = file_key
+            st.session_state.chunks = chunks
+            st.session_state.index = index
+            st.session_state.chunk_count = len(chunks)
+
+    st.success(f"Document indexed — {st.session_state.chunk_count} chunks ready.")
     st.divider()
 
     question = st.text_input("Ask a question about your document")
@@ -104,13 +107,15 @@ if uploaded_file:
             st.warning("Please enter your Groq API key in the sidebar.")
         else:
             with st.spinner("Thinking..."):
-                answer, sources = ask_llm(question, retrieve(question, index, chunks), groq_key)
-
+                answer, sources = ask_llm(
+                    question,
+                    retrieve(question, st.session_state.index, st.session_state.chunks),
+                    groq_key
+                )
             st.markdown("### Answer")
             st.success(answer)
-
             with st.expander("View source chunks used to answer"):
                 for i, chunk in enumerate(sources):
                     st.markdown(f"**Chunk {i+1}**")
                     st.text(chunk)
-                    st.divider()
+            st.divider()

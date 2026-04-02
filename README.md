@@ -1,4 +1,4 @@
-# 📊 Financial Document Analyzer
+# Financial Document Analyzer
 
 A RAG (Retrieval Augmented Generation) system that lets you upload any financial PDF and ask questions about it in plain English. Built from scratch — no LangChain.
 
@@ -21,7 +21,6 @@ The app retrieves the most relevant sections from your document and answers stri
 ---
 
 ## Architecture
-
 ```
 PDF Upload → Text Extraction (PyMuPDF)
           → Chunking (500 chars, 50 overlap)
@@ -31,7 +30,7 @@ PDF Upload → Text Extraction (PyMuPDF)
           → LLM Answer (Groq Llama 3.1)
 ```
 
-No LangChain — every component is built and wired manually so the pipeline is fully transparent and explainable.
+No LangChain — each component is built directly so the pipeline is easy to follow and modify.
 
 ---
 
@@ -49,7 +48,6 @@ No LangChain — every component is built and wired manually so the pipeline is 
 ---
 
 ## Project Structure
-
 ```
 financial-document-analyzer/
 ├── app.py                      # Streamlit frontend + RAG pipeline
@@ -57,30 +55,20 @@ financial-document-analyzer/
 ├── sample_bank_statement.pdf   # Test document (fictional data)
 ├── 01_rag_pipeline.ipynb       # Full pipeline built step by step
 ├── 02_evaluation.ipynb         # Answer quality evaluation
-└── .env.example                # API key template
+└── .env.example                # API key reference
 ```
 
 ---
 
 ## Run Locally
-
 ```bash
 git clone https://github.com/Sachin-kalaiselvan/financial-document-analyzer
 cd financial-document-analyzer
 pip install -r requirements.txt
-```
-
-Create a `.env` file:
-```
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-Run the app:
-```bash
 streamlit run app.py
 ```
 
-Get your free Groq API key at [console.groq.com](https://console.groq.com)
+When the app opens, enter your Groq API key in the sidebar when prompted. Get your free key at [console.groq.com](https://console.groq.com).
 
 ---
 
@@ -102,16 +90,5 @@ Tested on a 3-page fictional bank statement (Oct–Dec 2024):
 **Accuracy: 8/8 factual questions answered correctly**
 
 ---
-
-## Key Learnings
-
-- Chunk size of 500 with overlap 50 works well for tabular financial data
-- Increasing retrieval k from 4 to 6 improved coverage for edge case questions
-- Question phrasing affects retrieval — shorter, direct questions work best
-- Grounding the LLM strictly to retrieved context eliminates hallucination
-
----
-
-## Author
 
 **Sachin K** — [GitHub](https://github.com/Sachin-kalaiselvan)
