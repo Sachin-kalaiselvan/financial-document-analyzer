@@ -1,66 +1,44 @@
-# Financial Document Analyzer
+# financial-document-analyzer
 
-A RAG (Retrieval Augmented Generation) system that lets you upload any financial PDF and ask questions about it in plain English. Built from scratch — no LangChain.
+upload a financial pdf, ask it questions in normal english. RAG built from scratch, no langchain.
 
-🚀 **[Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/SachinK011/financial-document-analyzer)**
+**demo:** https://huggingface.co/spaces/SachinK011/financial-document-analyzer
 
----
+## what you can ask
 
-## What it does
+throw in a bank statement, loan agreement, annual report, then stuff like:
 
-Upload a bank statement, loan agreement, or financial report and ask questions like:
+- *"what's the average monthly surplus?"*
+- *"how much goes to rent each month?"*
+- *"what are the recurring investment expenses?"*
+- *"closing balance?"*
+- *"total monthly income incl. freelance?"*
 
-- *"What is the average monthly surplus?"*
-- *"How much is paid for rent each month?"*
-- *"What are the recurring investment expenses?"*
-- *"What is the closing balance?"*
-- *"What is the total monthly income including freelance?"*
+it pulls the most relevant chunks of your doc and answers *only* from those, which keeps the model from making stuff up.
 
-The app retrieves the most relevant sections from your document and answers strictly from that context, which significantly reduces the chance of the model making up information.
+## pipeline
 
----
-
-## Architecture
 ```
-PDF Upload → Text Extraction (PyMuPDF)
-          → Chunking (500 chars, 50 overlap)
-          → Embeddings (HuggingFace all-MiniLM-L6-v2)
-          → Vector Store (FAISS)
-          → Retrieval (top-6 chunks)
-          → LLM Answer (Groq Llama 3.1)
+pdf → text (pymupdf)
+    → chunks (500 chars, 50 overlap)
+    → embeddings (all-MiniLM-L6-v2)
+    → FAISS
+    → top 6 chunks
+    → answer (groq, llama 3.1 8b instant)
 ```
 
-No LangChain — each component is built directly so the pipeline is easy to follow and modify.
+no langchain on purpose. every piece is written out so it's easy to follow and swap. streamlit frontend, hosted on HF spaces.
 
----
-
-## Tech Stack
-
-| Component | Tool |
-|---|---|
-| PDF Parsing | PyMuPDF |
-| Text Embeddings | HuggingFace `all-MiniLM-L6-v2` |
-| Vector Store | FAISS (Facebook AI Similarity Search) |
-| LLM | Groq API — Llama 3.1 8B Instant |
-| Frontend | Streamlit |
-| Deployment | Hugging Face Spaces |
-
----
-
-## Project Structure
 ```
-financial-document-analyzer/
-├── app.py                      # Streamlit frontend + RAG pipeline
-├── requirements.txt            # Dependencies
-├── sample_bank_statement.pdf   # Test document (fictional data)
-├── 01_rag_pipeline.ipynb       # Full pipeline built step by step
-├── 02_evaluation.ipynb         # Answer quality evaluation
-└── .env.example                # API key reference
+app.py                     streamlit + the pipeline
+01_rag_pipeline.ipynb      built step by step
+02_evaluation.ipynb        answer quality eval
+sample_bank_statement.pdf  fake test doc
+.env.example
 ```
 
----
+## run it
 
-## Run Locally
 ```bash
 git clone https://github.com/Sachin-kalaiselvan/financial-document-analyzer
 cd financial-document-analyzer
@@ -68,27 +46,8 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-When the app opens, enter your Groq API key in the sidebar when prompted. Get your free key at [console.groq.com](https://console.groq.com).
+paste a groq key in the sidebar when it asks (free at [console.groq.com](https://console.groq.com)).
 
----
+## eval
 
-## Evaluation Results
-
-Tested on a 3-page fictional bank statement (Oct–Dec 2024):
-
-| Question | Result |
-|---|---|
-| Average monthly surplus | ✅ Correct |
-| Rent per month | ✅ Correct |
-| Closing balance | ✅ Correct |
-| Total monthly income | ✅ Correct |
-| Recurring investments | ✅ Correct |
-| Opening balance | ✅ Correct |
-| Surplus % of income | ✅ Correct |
-| Questions not in document | ✅ Correctly refused |
-
-**Accuracy: 8/8 factual questions answered correctly**
-
----
-
-**Sachin K** — [GitHub](https://github.com/Sachin-kalaiselvan)
+3-page fake bank statement (oct–dec 2024): avg monthly surplus, rent, closing balance, total income, recurring investments, opening balance, surplus as % of income, all correct. questions that aren't in the doc get refused like they should. **8/8.**
