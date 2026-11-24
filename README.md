@@ -50,4 +50,4 @@ paste a groq key in the sidebar when it asks (free at [console.groq.com](https:/
 
 ## eval
 
-3-page fake bank statement (oct–dec 2024): avg monthly surplus, rent, closing balance, total income, recurring investments, opening balance, surplus as % of income, all correct. questions that aren't in the doc get refused like they should. **8/8.**
+3-page fake bank statement (oct-dec 2024): avg monthly surplus, rent, closing balance, total income, recurring investments, opening balance, surplus as % of income, all correct. questions that aren't in the doc get refused like they should. **8/8.**
